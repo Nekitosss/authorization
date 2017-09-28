@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"authorization/db"
+	"github.com/Nekitosss/authorization/db"
 	"database/sql"
 
 	"github.com/satori/go.uuid"

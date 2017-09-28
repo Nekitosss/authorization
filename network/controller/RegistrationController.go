@@ -3,10 +3,10 @@ package controller
 import (
 	"database/sql"
 
-	"authorization/db"
+	"github.com/Nekitosss/authorization/db"
 
-	"authorization/network/controller/structures"
-	"authorization/utils"
+	"github.com/Nekitosss/authorization/network/controller/structures"
+	"github.com/Nekitosss/authorization/utils"
 
 	"github.com/satori/go.uuid"
 )

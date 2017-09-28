@@ -3,12 +3,12 @@ package network
 import (
 	"database/sql"
 
-	"authorization/network/controller"
-	"authorization/network/controller/structures"
+	"github.com/Nekitosss/authorization/network/controller"
+	"github.com/Nekitosss/authorization/network/controller/structures"
 
 	"github.com/satori/go.uuid"
 
-	"authorization/db"
+	"github.com/Nekitosss/authorization/db"
 )
 
 

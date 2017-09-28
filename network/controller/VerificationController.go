@@ -1,10 +1,10 @@
 package controller
 
 import (
-	user2 "authorization/db"
+	user2 "github.com/Nekitosss/authorization/db"
 	"database/sql"
 
-	"authorization/utils"
+	"github.com/Nekitosss/authorization/utils"
 
 	"github.com/satori/go.uuid"
 )

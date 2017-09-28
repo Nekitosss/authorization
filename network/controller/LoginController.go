@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"authorization/db"
-	"authorization/network/controller/structures"
-	"authorization/utils"
+	"github.com/Nekitosss/authorization/db"
+	"github.com/Nekitosss/authorization/network/controller/structures"
+	"github.com/Nekitosss/authorization/utils"
 	"database/sql"
 )
 

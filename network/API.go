@@ -1,7 +1,7 @@
 package network
 
 import (
-	"authorization/network/controller/structures"
+	"github.com/Nekitosss/authorization/network/controller/structures"
 	"encoding/json"
 	"io"
 	"net/http"
