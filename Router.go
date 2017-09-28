@@ -1,7 +1,7 @@
 package authorization
 
 import (
-	n "authorization/network"
+	n "github.com/Nekitosss/authorization/network"
 	"net/http"
 
 	"github.com/gorilla/mux"
