@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"time"
 
-	"authorization/utils"
+	"github.com/Nekitosss/authorization/utils"
 
 	"github.com/satori/go.uuid"
 )
