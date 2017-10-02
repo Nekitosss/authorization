@@ -1,7 +1,7 @@
 package network
 
 import (
-	"database/sql"
+	"github.com/jinzhu/gorm"
 
 	"github.com/Nekitosss/authorization/network/controller"
 	"github.com/Nekitosss/authorization/network/controller/structures"
@@ -15,7 +15,7 @@ import (
 var executor Executor
 
 
-func PrepareExecutor(database *sql.DB, emailConfig EmailConfiguration) {
+func PrepareExecutor(database *gorm.DB, emailConfig EmailConfiguration) {
 	executor = &ExecutorImpl{database, emailConfig}
 }
 
@@ -43,7 +43,7 @@ type Executor interface {
 
 
 type ExecutorImpl struct {
-	database *sql.DB
+	database *gorm.DB
 
 	emailConfig EmailConfiguration
 }
