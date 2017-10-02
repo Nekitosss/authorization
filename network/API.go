@@ -83,7 +83,7 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 
 	http.SetCookie(writer, &cookie)
 
-	var result = serverResponse{"userID" : session.UserID.String()}
+	var result = serverResponse{"userID" : session.UserModelID.String()}
 	json.NewEncoder(writer).Encode(result)
 }
 
