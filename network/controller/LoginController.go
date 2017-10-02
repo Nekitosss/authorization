@@ -4,10 +4,10 @@ import (
 	"github.com/Nekitosss/authorization/db"
 	"github.com/Nekitosss/authorization/network/controller/structures"
 	"github.com/Nekitosss/authorization/utils"
-	"database/sql"
+	"github.com/jinzhu/gorm"
 )
 
-func LogIn(database *sql.DB, info structures.LoginInfo) (*db.Session, error) {
+func LogIn(database *gorm.DB, info structures.LoginInfo) (*db.Session, error) {
 
 	isCorrectLoginPassword, err := checkLoginAndPasswordEquality(database, info.Login, info.Password)
 
@@ -26,7 +26,7 @@ func LogIn(database *sql.DB, info structures.LoginInfo) (*db.Session, error) {
 
 
 
-func checkLoginAndPasswordEquality(database *sql.DB, login string, password string) (bool, error) {
+func checkLoginAndPasswordEquality(database *gorm.DB, login string, password string) (bool, error) {
 
 	var dbPassword, err = db.GetUserPasswordHash(database, login)
 

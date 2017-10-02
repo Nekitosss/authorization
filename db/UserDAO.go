@@ -1,60 +1,44 @@
 package db
 
 import (
-	"database/sql"
+	"github.com/jinzhu/gorm"
 
 	"github.com/satori/go.uuid"
 )
 
 
-func (u Model) Insert(database *sql.DB) error {
-	var _, err = database.Exec(insertSQL, u.ID.String(), u.Login, u.Email, string(u.PasswordHash), u.NameAlias, u.RegistrationID)
-
-	return err
-}
-
-func (u Model) UpdateRegistrationID(database *sql.DB, newRegistrationID string) error {
-	var _, err = database.Exec(updateSQL, newRegistrationID, u.ID.String())
-
-	return err
-}
-
-func SelectUserByLogin(database *sql.DB, login string) (Model, error) {
-	return selectUser(database, selectUserByLoginSQL, login)
+func (u UserModel) UpdateRegistrationID(database *gorm.DB, newRegistrationID *uuid.UUID) error {
+	return database.Model(&u).Update("registration_id", newRegistrationID).Error
 }
 
 
-func SelectUserByRegisterID(database *sql.DB, registerID uuid.UUID) (Model, error) {
-	return selectUser(database, selectUseByRegIDSQL, registerID.String())
+func SelectUserByLogin(database *gorm.DB, login string) (UserModel, error) {
+
+	var user = UserModel{}
+	err := database.Where("login = $1", login).First(&user).Error
+
+	return user, err
 }
 
 
-func selectUser(database *sql.DB, sql string, arg interface{}) (Model, error) {
-	var m Model
-	var passwordHash []byte
-	
-	var err = database.QueryRow(sql, arg).Scan(&m.ID, &m.Login, &m.Email, &passwordHash, &m.NameAlias, &m.RegistrationID)
-	
-	if err != nil {
-		return m, err
-	}
-	
-	m.PasswordHash = passwordHash
-	
-	return m, nil
-	
+func SelectUserByRegisterID(database *gorm.DB, registerID uuid.UUID) (UserModel, error) {
+	var user = UserModel{}
+	err := database.Where("registration_id = $1", registerID).First(&user).Error
+
+	return user, err
 }
 
 
-func GetUserPasswordHash(database *sql.DB, login string) ([]byte, error) {
+
+func GetUserPasswordHash(database *gorm.DB, login string) ([]byte, error) {
 	var model, err = SelectUserByLogin(database, login)
 
 	return model.PasswordHash, err
 }
 
-func IsLoginExists(database *sql.DB, login string) (bool, error) {
+func IsLoginExists(database *gorm.DB, login string) (bool, error) {
 	var exists bool
-	var err = database.QueryRow(existsLoginValidationSQL, login).Scan(&exists)
+	var err = database.Raw(existsLoginValidationSQL, login).Scan(&exists).Error
 
 	return exists, err
 }

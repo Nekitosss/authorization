@@ -1,7 +1,7 @@
 package db
 
 import (
-	"database/sql"
+	"github.com/jinzhu/gorm"
 	"time"
 
 	"github.com/Nekitosss/authorization/utils"
@@ -21,39 +21,37 @@ const (
 	validateSessionSQL = "SELECT userid FROM " + sessionTable + " WHERE session = $1"
 )
 
-func (s Session) Insert(database *sql.DB) error {
-	var _, err = database.Exec(insertSessionSQL, s.SessionID.String(), s.UserID.String(), s.LoginTime, s.LastSeenTime)
-	return err
-}
 
 
-func GetSession(database  *sql.DB, userid uuid.UUID) (Session, error) {
+func GetSession(database  *gorm.DB, userid uuid.UUID) (Session, error) {
 
 	var session = Session{}
 
-	var err = database.QueryRow(selectSessionSQL, userid).Scan(&session.SessionID, &session.UserID, &session.LoginTime, &session.LastSeenTime)
+	err := database.Where("user_id = $1", userid).Find(&session).Error
 
-	if err != sql.ErrNoRows {
+	if err != gorm.ErrRecordNotFound {
 		return session, err
 
-	} else if err == sql.ErrNoRows {
-
+	} else if err == gorm.ErrRecordNotFound {
 		return createSession(database, userid)
-	} else {
 
+	} else {
 		return session, nil
 	}
 
 }
 
 
-func ValidateSession(database *sql.DB, sessionID uuid.UUID) uuid.UUID {
+func ValidateSession(database *gorm.DB, sessionID uuid.UUID) uuid.UUID {
 
 	userID := uuid.Nil
 
-	var err = database.QueryRow(validateSessionSQL, sessionID).Scan(&userID)
+	var session = Session{}
+	session.SessionID = uuid.Nil
 
-	if err != sql.ErrNoRows {
+	err := database.First(&session, sessionID).Error
+
+	if err != gorm.ErrRecordNotFound {
 		utils.CheckError(err)
 	}
 
@@ -61,15 +59,15 @@ func ValidateSession(database *sql.DB, sessionID uuid.UUID) uuid.UUID {
 }
 
 
-func createSession(database *sql.DB, userid uuid.UUID) (Session, error) {
+func createSession(database *gorm.DB, userid uuid.UUID) (Session, error) {
 
 	var session = Session{}
 	session.SessionID = uuid.NewV4()
-	session.UserID = userid
+	session.UserModelID = userid
 	session.LoginTime = time.Now()
 	session.LastSeenTime = session.LoginTime
 
-	var err = session.Insert(database)
+	err := database.Create(&session).Error
 
 	return session, err
 }

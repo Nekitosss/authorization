@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"database/sql"
+	"github.com/jinzhu/gorm"
 
 	"github.com/Nekitosss/authorization/db"
 
@@ -23,7 +23,7 @@ type EmailConfiguration interface {
 
 
 //Регистрирует нового пользователя
-func RegisterNewUser(database *sql.DB, info structures.RegisterInfo, emailConfig EmailConfiguration) error {
+func RegisterNewUser(database *gorm.DB, info structures.RegisterInfo, emailConfig EmailConfiguration) error {
 	
 	filledInfo := fullFillRegisterInfo(info)
 	
@@ -52,12 +52,12 @@ func fullFillRegisterInfo(info structures.RegisterInfo) structures.RegisterInfo 
 	return info
 }
 
-func validateLoginExistance(database *sql.DB, login string) (bool, error) {
+func validateLoginExistance(database *gorm.DB, login string) (bool, error) {
 	return db.IsLoginExists(database, login)
 }
 
 
-func registerValidatedUser(database *sql.DB, info structures.RegisterInfo, emailConfig EmailConfiguration) error {
+func registerValidatedUser(database *gorm.DB, info structures.RegisterInfo, emailConfig EmailConfiguration) error {
 	
 	var newHashedPassword, err = utils.CryptPassword([]byte(info.Password))
 	
@@ -66,9 +66,9 @@ func registerValidatedUser(database *sql.DB, info structures.RegisterInfo, email
 	}
 	
 	var registrationID = uuid.NewV4()
-	newUser := db.Model{uuid.NewV4(), info.Login, info.Email, newHashedPassword, info.NameAlias, registrationID.String()}
+	newUser := db.UserModel{uuid.NewV4(), info.Login, info.Email, newHashedPassword, info.NameAlias, registrationID.String()}
 	
-	err = newUser.Insert(database)
+	err = database.Create(&newUser).Error
 	
 	if err == nil {
 		go sendVerification(info.Login, info.Email, info.RegisterType, registrationID, emailConfig)

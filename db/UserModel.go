@@ -1,19 +1,23 @@
 package db
 
-import "github.com/satori/go.uuid"
+import (
 
-type Model struct {
+	"github.com/satori/go.uuid"
+
+)
+
+type UserModel struct {
 	
 	ID uuid.UUID
 	
-	Login string
+	Login string `gorm:"index:user_login_idx;not null"`
 	
-	Email string
+	Email string `gorm:"index:user_email_idx;not null"`
 	
-	PasswordHash []byte
+	PasswordHash []byte `gorm:"not null"`
 	
-	NameAlias string
+	NameAlias string `gorm:"not null"`
 	
-	RegistrationID string
+	RegistrationID uuid.UUID `gorm:"index:user_registration_id_idx;"`
 }
 

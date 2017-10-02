@@ -7,11 +7,11 @@ import (
 )
 
 type Session struct {
-	SessionID uuid.UUID
+	SessionID uuid.UUID `gorm:"primary_key"`
 
-	UserID uuid.UUID
+	UserModelID uuid.UUID `gorm:"index:session_user_id_idx;not null"`
 
-	LoginTime time.Time
+	LoginTime time.Time `gorm:"index:session_user_id_idx;not null"`
 
-	LastSeenTime time.Time
+	LastSeenTime time.Time `gorm:"index:session_user_id_idx;not null"`
 }

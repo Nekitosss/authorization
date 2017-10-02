@@ -2,13 +2,13 @@ package authorization
 
 import (
 	"github.com/Nekitosss/authorization/network"
-	"database/sql"
+	"github.com/jinzhu/gorm"
 
 	"github.com/gorilla/mux"
 )
 
 
-func PrepareToWork(database *sql.DB, configuration network.EmailConfiguration, router *mux.Router) {
+func PrepareToWork(database *gorm.DB, configuration network.EmailConfiguration, router *mux.Router) {
 
 	network.PrepareExecutor(database, configuration)
 
