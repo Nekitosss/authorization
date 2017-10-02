@@ -38,7 +38,7 @@ func GetUserPasswordHash(database *gorm.DB, login string) ([]byte, error) {
 
 func IsLoginExists(database *gorm.DB, login string) (bool, error) {
 	var exists bool
-	var err = database.DB().QueryRow(existsLoginValidationSQL, login).Scan(&exists)
+	var err = database.DB().QueryRow("SELECT EXISTS(SELECT 1 FROM auth.user_model_models WHERE email = $1)", login).Scan(&exists)
 
 	return exists, err
 }
