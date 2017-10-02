@@ -18,7 +18,7 @@ type UserModel struct {
 	
 	NameAlias string `gorm:"not null"`
 	
-	RegistrationID uuid.UUID `gorm:"index:user_registration_id_idx;"`
+	RegistrationID *uuid.UUID `gorm:"index:user_registration_id_idx;"`
 }
 
 func (pc UserModel) TableName() string {

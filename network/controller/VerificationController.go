@@ -24,11 +24,11 @@ func VerifyRegistration(database *gorm.DB, registerID uuid.UUID) error {
 
 	}
 	
-	if registerID.String() != user.RegistrationID {
+	if registerID != user.RegistrationID {
 		return utils.BLErrorVerificationInvalidRegID
 	}
 	
-	user.RegistrationID = ""
+	user.RegistrationID = nil
 	
 	return user.UpdateRegistrationID(database, nil)
 }
