@@ -27,7 +27,7 @@ func GetSession(database  *gorm.DB, userid uuid.UUID) (Session, error) {
 
 	var session = Session{}
 
-	err := database.Where("user_id = $1", userid).Find(&session).Error
+	err := database.Where("user_model_id = $1", userid).Find(&session).Error
 
 	if err != gorm.ErrRecordNotFound {
 		return session, err
