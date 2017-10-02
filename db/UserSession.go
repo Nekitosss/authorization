@@ -15,3 +15,8 @@ type Session struct {
 
 	LastSeenTime time.Time `gorm:"index:session_user_id_idx;not null"`
 }
+
+
+func (pc Session) TableName() string {
+	return "auth.session"
+}
