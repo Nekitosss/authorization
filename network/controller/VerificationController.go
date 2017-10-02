@@ -24,7 +24,7 @@ func VerifyRegistration(database *gorm.DB, registerID uuid.UUID) error {
 
 	}
 	
-	if registerID != user.RegistrationID {
+	if &registerID != user.RegistrationID {
 		return utils.BLErrorVerificationInvalidRegID
 	}
 	

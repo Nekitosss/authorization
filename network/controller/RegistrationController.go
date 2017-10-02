@@ -66,7 +66,7 @@ func registerValidatedUser(database *gorm.DB, info structures.RegisterInfo, emai
 	}
 	
 	var registrationID = uuid.NewV4()
-	newUser := db.UserModel{uuid.NewV4(), info.Login, info.Email, newHashedPassword, info.NameAlias, registrationID}
+	newUser := db.UserModel{uuid.NewV4(), info.Login, info.Email, newHashedPassword, info.NameAlias, &registrationID}
 	
 	err = database.Create(&newUser).Error
 	
