@@ -22,14 +22,14 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	var err = json.NewDecoder(r.Body).Decode(&params)
 
 	if err != nil && err != io.EOF {
-		setServerError(w, err)
+		setErrorResult(w, err)
 		return
 	}
 
 	err = executor.Register(params)
 
 	if err != nil {
-		setServerError(w, err)
+		setErrorResult(w, err)
 		return
 	}
 
@@ -44,14 +44,14 @@ func VerifyRegistration(w http.ResponseWriter, r *http.Request) {
 	var registrationID, err = uuid.FromString(registrationIDString)
 	
 	if err != nil {
-		setServerError(w, err)
+		setErrorResult(w, err)
 		return
 	}
 	
 	err = executor.VerifyRegister(registrationID)
 
 	if err != nil {
-		setServerError(w, err)
+		setErrorResult(w, err)
 		return
 	}
 
@@ -67,14 +67,14 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 	err := json.NewDecoder(request.Body).Decode(&params)
 
 	if err != nil && err != io.EOF {
-		setServerError(writer, err)
+		setErrorResult(writer, err)
 		return
 	}
 
 	session, err := executor.Login(params)
 
 	if err != nil {
-		setServerError(writer, err)
+		setErrorResult(writer, err)
 		return
 	}
 
@@ -116,5 +116,5 @@ func ValidateSession(writer http.ResponseWriter, request *http.Request) {
 func sendSimpleSuccess(w http.ResponseWriter) {
 	result := serverResponse{"success": true}
 
-json.NewEncoder(w).Encode(result)
+	json.NewEncoder(w).Encode(result)
 }
