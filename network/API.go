@@ -115,12 +115,6 @@ func ValidateSession(writer http.ResponseWriter, request *http.Request) {
 
 func sendSimpleSuccess(w http.ResponseWriter) {
 	result := serverResponse{"success": true}
-	successRes, err := json.Marshal(result)
-	
-	if err != nil {
-		setServerError(w, err);
-		return
-	}
-	
-	json.NewEncoder(w).Encode(successRes)
+
+json.NewEncoder(w).Encode(result)
 }
