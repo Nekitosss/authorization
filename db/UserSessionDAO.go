@@ -44,18 +44,16 @@ func GetSession(database  *gorm.DB, userid uuid.UUID) (Session, error) {
 
 func ValidateSession(database *gorm.DB, sessionID uuid.UUID) uuid.UUID {
 
-	userID := uuid.Nil
-
 	var session = Session{}
-	session.SessionID = uuid.Nil
+	session.SessionID = sessionID
 
-	err := database.First(&session, sessionID).Error
+	err := database.First(&session).Error
 
 	if err != gorm.ErrRecordNotFound {
 		utils.CheckError(err)
 	}
 
-	return userID
+	return session.UserModelID
 }
 
 

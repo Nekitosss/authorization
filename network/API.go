@@ -71,7 +71,7 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	session, err := executor.Login(params)
+	session, name, err := executor.Login(params)
 
 	if err != nil {
 		setErrorResult(writer, err)
@@ -83,7 +83,7 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 
 	http.SetCookie(writer, &cookie)
 
-	var result = serverResponse{"userID" : session.UserModelID.String()}
+	var result = serverResponse{"userID" : session.UserModelID.String(), "userName": name}
 	json.NewEncoder(writer).Encode(result)
 }
 

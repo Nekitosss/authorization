@@ -15,6 +15,11 @@ import (
 var executor Executor
 
 
+func GetExecutor() Executor {
+	return executor
+}
+
+
 func PrepareExecutor(database *gorm.DB, emailConfig EmailConfiguration) {
 	executor = &ExecutorImpl{database, emailConfig}
 }
@@ -36,7 +41,7 @@ type Executor interface {
 
 	VerifyRegister(registerID uuid.UUID) error
 
-	Login(info structures.LoginInfo) (*db.Session, error)
+	Login(info structures.LoginInfo) (*db.Session, string, error)
 
 	ValidateSession(info structures.ValidateSessionInfo) (uuid.UUID, error)
 }
@@ -57,7 +62,7 @@ func (e *ExecutorImpl) VerifyRegister(registerID uuid.UUID) error {
 	return controller.VerifyRegistration(e.database, registerID)
 }
 
-func (e *ExecutorImpl) Login(info structures.LoginInfo) (*db.Session, error) {
+func (e *ExecutorImpl) Login(info structures.LoginInfo) (*db.Session, string, error) {
 	return controller.LogIn(e.database, info)
 }
 

@@ -7,12 +7,12 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-func LogIn(database *gorm.DB, info structures.LoginInfo) (*db.Session, error) {
+func LogIn(database *gorm.DB, info structures.LoginInfo) (*db.Session, string, error) {
 
 	isCorrectLoginPassword, err := checkLoginAndPasswordEquality(database, info.Login, info.Password)
 
 	if err != nil || isCorrectLoginPassword == false {
-		return nil, utils.BLErrorLoginIncorrectPassword
+		return nil, "", utils.BLErrorLoginIncorrectPassword
 	}
 
 	user, err := db.SelectUserByLogin(database, info.Login)
@@ -21,7 +21,7 @@ func LogIn(database *gorm.DB, info structures.LoginInfo) (*db.Session, error) {
 	session, err := db.GetSession(database, user.ID)
 	utils.CheckError(err)
 
-	return &session, nil
+	return &session, user.NameAlias, nil
 }
 
 
