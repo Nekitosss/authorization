@@ -20,7 +20,6 @@ type Route struct {
 
 
 var routes = []Route{
-	Route{"Register", "POST", "/v1/register", n.Register},
 	Route{"ValidateRegister", "GET", "/v1/verify_register/{id}", n.VerifyRegistration},
 	Route{"Login", "POST", "/v1/login", n.Login},
 	Route{"ValidateSession", "POST", "/v1/validate_session", n.ValidateSession},

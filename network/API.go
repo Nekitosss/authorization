@@ -15,28 +15,6 @@ import (
 type serverResponse map[string]interface{}
 
 
-func Register(w http.ResponseWriter, r *http.Request) {
-
-	var params structures.RegisterInfo
-
-	var err = json.NewDecoder(r.Body).Decode(&params)
-
-	if err != nil && err != io.EOF {
-		setErrorResult(w, err)
-		return
-	}
-
-	err = executor.Register(params)
-
-	if err != nil {
-		setErrorResult(w, err)
-		return
-	}
-
-	sendSimpleSuccess(w)
-}
-
-
 func VerifyRegistration(w http.ResponseWriter, r *http.Request) {
 	
 	var registrationIDString = mux.Vars(r)["id"]
@@ -71,20 +49,23 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	session, name, err := executor.Login(params)
+	session, registrationID, err := executor.Login(params)
 
 	if err != nil {
 		setErrorResult(writer, err)
-		return
+
+	} else if registrationID.Valid {
+		result := serverResponse{"registrationID": registrationID.UUID.String()}
+		json.NewEncoder(writer).Encode(result)
+
+	} else {
+		expiration := time.Now().AddDate(10, 0, 0)
+		cookie := http.Cookie{Name: "session", Value: session.SessionID.String(), Expires: expiration}
+		http.SetCookie(writer, &cookie)
+
+		var result = serverResponse{"userID" : session.UserModelID.String()}
+		json.NewEncoder(writer).Encode(result)
 	}
-
-	expiration := time.Now().AddDate(0, 1, 0)
-	cookie := http.Cookie{Name: "session", Value: session.SessionID.String(), Expires: expiration}
-
-	http.SetCookie(writer, &cookie)
-
-	var result = serverResponse{"userID" : session.UserModelID.String(), "userName": name}
-	json.NewEncoder(writer).Encode(result)
 }
 
 
@@ -92,7 +73,6 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 func ValidateSession(writer http.ResponseWriter, request *http.Request) {
 
 	var info structures.ValidateSessionInfo
-
 	err := json.NewDecoder(request.Body).Decode(&info)
 
 	if err != nil {

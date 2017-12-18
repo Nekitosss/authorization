@@ -4,17 +4,17 @@ package db
 
 
 const (
-	modelTable = " auth.users "
+	modelTable = " auth.user_model_models "
 	
-	modelColums = "identifier, login, email, pass, namealias, regID"
+	modelColums = "identifier, email, regID"
 	
-	insertSQL = "INSERT INTO " + modelTable + " (" + modelColums + ") VALUES ($1, $2, $3, $4, $5, $6)"
+	insertSQL = "INSERT INTO " + modelTable + " (" + modelColums + ") VALUES ($1, $2, $3)"
 	
 	updateSQL = "UPDATE " + modelTable + " SET regID = $1 WHERE identifier = $2"
 	
 	selectAndFrom = "SELECT " + modelColums + " FROM " + modelTable
 	
-	selectUserByLoginSQL = selectAndFrom + " WHERE login = $1"
+	selectUserByLoginSQL = selectAndFrom + " WHERE email = $1"
 	
 	selectUseByRegIDSQL = selectAndFrom + " WHERE regID = $1"
 	

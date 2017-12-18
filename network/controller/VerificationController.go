@@ -9,6 +9,7 @@ import (
 	"github.com/satori/go.uuid"
 )
 
+
 func VerifyRegistration(database *gorm.DB, registerID uuid.UUID) error {
 	
 	var user, err = user2.SelectUserByRegisterID(database, registerID)
@@ -20,8 +21,6 @@ func VerifyRegistration(database *gorm.DB, registerID uuid.UUID) error {
 		} else {
 			return err
 		}
-
-
 	}
 	
 	if registerID != *user.RegistrationID {

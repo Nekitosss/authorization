@@ -37,40 +37,36 @@ type EmailConfiguration interface {
 
 type Executor interface {
 
-	Register(info structures.RegisterInfo) error
-
 	VerifyRegister(registerID uuid.UUID) error
 
-	Login(info structures.LoginInfo) (*db.Session, string, error)
+	Login(info structures.LoginInfo) (*db.Session, uuid.NullUUID, error)
 
 	ValidateSession(info structures.ValidateSessionInfo) (uuid.UUID, error)
+
 }
 
 
 type ExecutorImpl struct {
+
 	database *gorm.DB
 
 	emailConfig EmailConfiguration
+
 }
 
-
-func (e *ExecutorImpl) Register(info structures.RegisterInfo) error {
-	return controller.RegisterNewUser(e.database, info, e.emailConfig)
-}
 
 func (e *ExecutorImpl) VerifyRegister(registerID uuid.UUID) error {
 	return controller.VerifyRegistration(e.database, registerID)
 }
 
-func (e *ExecutorImpl) Login(info structures.LoginInfo) (*db.Session, string, error) {
-	return controller.LogIn(e.database, info)
+
+func (e *ExecutorImpl) Login(info structures.LoginInfo) (*db.Session, uuid.NullUUID, error) {
+	return controller.LogIn(e.database, info, e.emailConfig)
 }
 
 
 func (e *ExecutorImpl) ValidateSession(info structures.ValidateSessionInfo) (uuid.UUID, error) {
-
 	sid, err := uuid.FromString(info.SessionID)
-
 	if err != nil {
 		return uuid.Nil, err
 	}

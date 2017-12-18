@@ -12,10 +12,9 @@ func (u UserModel) UpdateRegistrationID(database *gorm.DB, newRegistrationID *uu
 }
 
 
-func SelectUserByLogin(database *gorm.DB, login string) (UserModel, error) {
-
+func SelectUserByEmail(database *gorm.DB, email string) (UserModel, error) {
 	var user = UserModel{}
-	err := database.Where("login = $1", login).First(&user).Error
+	err := database.Where("email = $1", email).First(&user).Error
 
 	return user, err
 }
@@ -30,15 +29,9 @@ func SelectUserByRegisterID(database *gorm.DB, registerID uuid.UUID) (UserModel,
 
 
 
-func GetUserPasswordHash(database *gorm.DB, login string) ([]byte, error) {
-	var model, err = SelectUserByLogin(database, login)
-
-	return model.PasswordHash, err
-}
-
-func IsLoginExists(database *gorm.DB, login string) (bool, error) {
+func IsUserExists(database *gorm.DB, email string) (bool, error) {
 	var exists bool
-	var err = database.DB().QueryRow("SELECT EXISTS(SELECT 1 FROM auth.user_model_models WHERE email = $1)", login).Scan(&exists)
+	var err = database.DB().QueryRow(existsLoginValidationSQL, email).Scan(&exists)
 
 	return exists, err
 }

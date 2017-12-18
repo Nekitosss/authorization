@@ -9,18 +9,6 @@ import (
 	"github.com/satori/go.uuid"
 )
 
-const (
-	insertSessionSQL = "INSERT INTO" + sessionTable + "(" + sessionColumns + ") VALUES ($1, $2, $3, $4)"
-
-	selectSessionSQL = "SELECT" + sessionColumns + "FROM" + sessionTable+  "WHERE userid = $1"
-
-	sessionColumns = " identifier, userid, logintime, lastseentime "
-
-	sessionTable = " auth.session "
-
-	validateSessionSQL = "SELECT userid FROM " + sessionTable + " WHERE session = $1"
-)
-
 
 
 func GetSession(database  *gorm.DB, userid uuid.UUID) (Session, error) {
