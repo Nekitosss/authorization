@@ -19,46 +19,76 @@ type EmailConfiguration interface {
 }
 
 
-func LogIn(database *gorm.DB, info structures.LoginInfo, emailConfig EmailConfiguration) (*db.Session, uuid.NullUUID, error) {
-	exists, err := db.IsUserExists(database, info.Email)
+func AuthVerifiedUser(database *gorm.DB, info structures.AuthInfo) (*db.Session, error) {
+	registerID, err := uuid.FromString(info.RegistrationID)
 
 	if err != nil {
-		return nil, uuid.NullUUID{}, err
-	} else if exists {
-		return getExistedUserSession(database, info)
-	} else {
+		return nil, err
+	}
+
+	existedUser, err := db.SelectUserByRegisterID(database, registerID)
+
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, utils.BLErrorVerificationNotFoundUser
+		} else {
+			return nil, err
+		}
+	}
+
+	userRegistration, err := db.SelectUserRegistration(database, existedUser.ID)
+
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, utils.BLErrorVerificationInvalidRegID
+		} else {
+			return nil, err
+		}
+	}
+
+	if userRegistration.Confirmed == false {
+		return nil, utils.BLErrorVerificationInvalidRegID
+	}
+
+	session, err := db.GetSession(database, existedUser.ID)
+	return &session,  err
+}
+
+
+func LogIn(database *gorm.DB, info structures.LoginInfo, emailConfig EmailConfiguration) (uuid.UUID, error) {
+	user, err := db.SelectUserByEmail(database, info.Email)
+
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return uuid.UUID{}, err
+	} else if err == gorm.ErrRecordNotFound {
 		return registerNotExistedUser(database, info, emailConfig)
-	}
-}
-
-
-func getExistedUserSession(database *gorm.DB, info structures.LoginInfo) (*db.Session, uuid.NullUUID, error) {
-	existedUser, err := db.SelectUserByEmail(database, info.Email)
-
-	if err != nil {
-		return nil, uuid.NullUUID{}, err
-
-	} else if existedUser.RegistrationID.Valid {
-		return nil, existedUser.RegistrationID.UUID, nil
-
 	} else {
-		session, err := db.GetSession(database, existedUser.ID)
-		return &session, uuid.NullUUID{}, err
+		return createUserRegistration(database, user.ID, info, emailConfig)
 	}
 }
 
 
-func registerNotExistedUser(database *gorm.DB, info structures.LoginInfo, emailConfig EmailConfiguration) (*db.Session, uuid.NullUUID, error) {
-	var registrationID = uuid.NewV4()
-	newUser := db.UserModel{uuid.NewV4(), info.Email, &registrationID}
-
+func registerNotExistedUser(database *gorm.DB, info structures.LoginInfo, emailConfig EmailConfiguration) (uuid.UUID, error) {
+	newUser := db.UserModel{uuid.NewV4(), info.Email}
 	err := database.Create(&newUser).Error
 
-	if err == nil {
-		go sendVerificationEmail(info.Email, registrationID, emailConfig)
+	if err != nil {
+		return uuid.UUID{}, err
 	}
 
-	return nil, uuid.NullUUID{UUID: registrationID, Valid: true}, err
+	return createUserRegistration(database, newUser.ID, info, emailConfig)
+}
+
+
+func createUserRegistration(database *gorm.DB, userID uuid.UUID, info structures.LoginInfo, emailConfig EmailConfiguration) (uuid.UUID, error) {
+	newUserRegistration := db.UserRegistration{userID, uuid.NewV4(), false}
+	err := database.Create(&newUserRegistration).Error
+
+	if err == nil {
+		go sendVerificationEmail(info.Email, newUserRegistration.RegistrationID, emailConfig)
+	}
+
+	return newUserRegistration.RegistrationID, err
 }
 
 

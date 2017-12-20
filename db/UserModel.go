@@ -11,10 +11,26 @@ type UserModel struct {
 	ID uuid.UUID
 	
 	Email string `gorm:"index:user_email_idx;not null"`
-	
-	RegistrationID uuid.NullUUID `gorm:"index:user_registration_id_idx;"`
+
 }
+
 
 func (pc UserModel) TableName() string {
 	return "auth.user_model_models"
+}
+
+
+type UserRegistration struct {
+
+	UserID uuid.UUID `gorm:"primary_key"`
+
+	RegistrationID uuid.UUID `gorm:"primary_key;"`
+
+	Confirmed bool
+
+}
+
+
+func (ur UserRegistration) TableName() string {
+	return "auth.user_registration_models"
 }

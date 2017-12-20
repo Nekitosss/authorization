@@ -37,9 +37,11 @@ type EmailConfiguration interface {
 
 type Executor interface {
 
+	AuthUser(info structures.AuthInfo)  (*db.Session, error)
+
 	VerifyRegister(registerID uuid.UUID) error
 
-	Login(info structures.LoginInfo) (*db.Session, uuid.NullUUID, error)
+	Login(info structures.LoginInfo) (uuid.UUID, error)
 
 	ValidateSession(info structures.ValidateSessionInfo) (uuid.UUID, error)
 
@@ -55,12 +57,17 @@ type ExecutorImpl struct {
 }
 
 
+func (e *ExecutorImpl) AuthUser(info structures.AuthInfo)  (*db.Session, error) {
+	return controller.AuthVerifiedUser(e.database, info)
+}
+
+
 func (e *ExecutorImpl) VerifyRegister(registerID uuid.UUID) error {
 	return controller.VerifyRegistration(e.database, registerID)
 }
 
 
-func (e *ExecutorImpl) Login(info structures.LoginInfo) (*db.Session, uuid.NullUUID, error) {
+func (e *ExecutorImpl) Login(info structures.LoginInfo) (uuid.UUID, error) {
 	return controller.LogIn(e.database, info, e.emailConfig)
 }
 

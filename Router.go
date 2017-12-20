@@ -22,6 +22,7 @@ type Route struct {
 var routes = []Route{
 	Route{"ValidateRegister", "GET", "/v1/verify_register/{id}", n.VerifyRegistration},
 	Route{"Login", "POST", "/v1/login", n.Login},
+	Route{"Auth", "POST", "/v1/auth", n.AuthVerifiedUser},
 	Route{"ValidateSession", "POST", "/v1/validate_session", n.ValidateSession},
 }
 
