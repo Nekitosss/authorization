@@ -8,4 +8,5 @@ var (
 
 	BLErrorVerificationInvalidRegID = errors.New("BLErrorVerificationInvalidRegID")
 
+	BLErrorVerificationNotConfirmedRegID = errors.New("BLErrorVerificationNotConfirmedRegID")
 )

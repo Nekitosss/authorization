@@ -36,7 +36,7 @@ func AuthVerifiedUser(database *gorm.DB, info structures.AuthInfo) (*db.Session,
 		}
 	}
 
-	userRegistration, err := db.SelectUserRegistration(database, existedUser.ID)
+	userRegistration, err := db.SelectUserRegistration(database, registerID)
 
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -47,7 +47,7 @@ func AuthVerifiedUser(database *gorm.DB, info structures.AuthInfo) (*db.Session,
 	}
 
 	if userRegistration.Confirmed == false {
-		return nil, utils.BLErrorVerificationInvalidRegID
+		return nil, utils.BLErrorVerificationNotConfirmedRegID
 	}
 
 	session, err := db.GetSession(database, existedUser.ID)

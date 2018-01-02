@@ -20,11 +20,11 @@ func SelectUserByEmail(database *gorm.DB, email string) (UserModel, error) {
 }
 
 
-func SelectUserRegistration(database *gorm.DB, userID uuid.UUID) (UserRegistration, error) {
+func SelectUserRegistration(database *gorm.DB, registerID uuid.UUID) (UserRegistration, error) {
 	var userRegistration = UserRegistration{}
 
 	err := database.
-		Where(&UserRegistration{UserID: userID}).
+		Where(&UserRegistration{RegistrationID: registerID}).
 		First(&userRegistration).
 		Error
 
