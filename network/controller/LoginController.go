@@ -16,6 +16,8 @@ type EmailConfiguration interface {
 	GetGmailPassword() string
 
 	GetDomain() string
+
+	GetGmailFrom() string
 }
 
 
@@ -69,7 +71,8 @@ func LogIn(database *gorm.DB, info structures.LoginInfo, emailConfig EmailConfig
 
 
 func registerNotExistedUser(database *gorm.DB, info structures.LoginInfo, emailConfig EmailConfiguration) (uuid.UUID, error) {
-	newUser := db.UserModel{uuid.NewV4(), info.Email}
+	newID, _ := uuid.NewV4()
+	newUser := db.UserModel{newID, info.Email}
 	err := database.Create(&newUser).Error
 
 	if err != nil {
@@ -81,7 +84,8 @@ func registerNotExistedUser(database *gorm.DB, info structures.LoginInfo, emailC
 
 
 func createUserRegistration(database *gorm.DB, userID uuid.UUID, info structures.LoginInfo, emailConfig EmailConfiguration) (uuid.UUID, error) {
-	newUserRegistration := db.UserRegistration{userID, uuid.NewV4(), false}
+	newID, _ := uuid.NewV4()
+	newUserRegistration := db.UserRegistration{userID, newID, false}
 	err := database.Create(&newUserRegistration).Error
 
 	if err == nil {
@@ -96,6 +100,6 @@ func sendVerificationEmail(toEmail string, registrationID uuid.UUID, emailConfig
 	var link = "http://" + emailConfig.GetDomain() + "/v1/verify_register/" + registrationID.String()
 	var signUpHTML = "To verify your account, please click on the following link.<br><br><a href=\""+link+ "\">"+link+"</a><br><br>Best Regards,<br>Awesome's team"
 
-	utils.SendEmail(emailConfig.GetGmailLogin(), emailConfig.GetGmailPassword(), []string{toEmail}, "Verification", signUpHTML)
+	utils.SendEmail(emailConfig.GetGmailFrom(), emailConfig.GetGmailLogin(), emailConfig.GetGmailPassword(), []string{toEmail}, "Verification", signUpHTML)
 }
 

@@ -31,6 +31,8 @@ type EmailConfiguration interface {
 
 	GetGmailPassword() string
 
+	GetGmailFrom() string
+
 	GetDomain() string
 }
 

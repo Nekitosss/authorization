@@ -22,7 +22,7 @@ import (
 )
 
 var (
-	mail_host              string = "smtp.gmail.com"
+	mail_host              string = "email-smtp.eu-west-1.amazonaws.com"
 	mail_host_port                = 587
 )
 
@@ -60,9 +60,9 @@ type Attachment struct {
 	Content  []byte
 }
 
-func SendEmail(gmailAccount string, gmailAccountPassword string, recipientMailList []string, subject string, htmlText string) {
+func SendEmail(from string, login string, password string, recipientMailList []string, subject string, htmlText string) {
 
-	var email = NewEMail(gmailAccount, gmailAccountPassword)
+	var email = NewEMail(from, login, password)
 	email.To = recipientMailList
 	email.HTML = htmlText
 	email.Subject = subject
@@ -77,12 +77,12 @@ func SendEmail(gmailAccount string, gmailAccountPassword string, recipientMailLi
 
 // NewEMail create new Email struct with config json.
 // config json is followed from Email struct fields.
-func NewEMail(gmailAccount string, gmailAccountPassword string) *Email {
+func NewEMail(from string, login string, password string) *Email {
 	e := new(Email)
 	e.Headers = textproto.MIMEHeader{}
-	e.Username = gmailAccount
-	e.From = gmailAccount
-	e.Password = gmailAccountPassword
+	e.Username = login
+	e.From = from
+	e.Password = password
 	e.Host = mail_host
 	e.Port = mail_host_port
 
