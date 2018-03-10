@@ -48,7 +48,7 @@ func ValidateSession(database *gorm.DB, sessionID uuid.UUID) uuid.UUID {
 func createSession(database *gorm.DB, userid uuid.UUID) (Session, error) {
 
 	var session = Session{}
-	session.SessionID, _ = uuid.NewV4()
+	session.SessionID = uuid.NewV4()
 	session.UserModelID = userid
 	session.LoginTime = time.Now()
 	session.LastSeenTime = session.LoginTime

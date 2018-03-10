@@ -71,7 +71,7 @@ func LogIn(database *gorm.DB, info structures.LoginInfo, emailConfig EmailConfig
 
 
 func registerNotExistedUser(database *gorm.DB, info structures.LoginInfo, emailConfig EmailConfiguration) (uuid.UUID, error) {
-	newID, _ := uuid.NewV4()
+	newID := uuid.NewV4()
 	newUser := db.UserModel{newID, info.Email}
 	err := database.Create(&newUser).Error
 
@@ -84,7 +84,7 @@ func registerNotExistedUser(database *gorm.DB, info structures.LoginInfo, emailC
 
 
 func createUserRegistration(database *gorm.DB, userID uuid.UUID, info structures.LoginInfo, emailConfig EmailConfiguration) (uuid.UUID, error) {
-	newID, _ := uuid.NewV4()
+	newID := uuid.NewV4()
 	newUserRegistration := db.UserRegistration{userID, newID, false}
 	err := database.Create(&newUserRegistration).Error
 
