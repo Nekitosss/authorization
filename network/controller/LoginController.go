@@ -98,7 +98,7 @@ func createUserRegistration(database *gorm.DB, userID uuid.UUID, info structures
 }
 
 
-var authorizationTemplate, _ = template.ParseFiles("/root/fooddly_server/auth_confirmation.html")
+var authorizationTemplate, _ = template.ParseFiles("/root/auth_confirmation.html")
 
 
 func sendVerificationEmail(toEmail string, registrationID uuid.UUID, emailConfig EmailConfiguration) {
