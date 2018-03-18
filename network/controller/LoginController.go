@@ -6,6 +6,8 @@ import (
 	"github.com/Nekitosss/authorization/utils"
 	"github.com/jinzhu/gorm"
 	"github.com/satori/go.uuid"
+	"html/template"
+	"bytes"
 )
 
 
@@ -96,9 +98,23 @@ func createUserRegistration(database *gorm.DB, userID uuid.UUID, info structures
 }
 
 
+var authorizationTemplate, _ = template.ParseFiles("/root/fooddly_server/auth_confirmation.html")
+
+
 func sendVerificationEmail(toEmail string, registrationID uuid.UUID, emailConfig EmailConfiguration) {
+
 	var link = "http://" + emailConfig.GetDomain() + "/v1/verify_register/" + registrationID.String()
-	var signUpHTML = "To verify your account, please click on the following link.<br><br><a href=\""+link+ "\">"+link+"</a><br><br>Best Regards,<br>Awesome's team"
+	var tpl bytes.Buffer
+
+	data := struct { RegistrationLink string } {
+		RegistrationLink: link,
+	}
+
+	if err := authorizationTemplate.Execute(&tpl, data); err != nil {
+		return
+	}
+
+	var signUpHTML = tpl.String()
 
 	utils.SendEmail(emailConfig.GetGmailFrom(), emailConfig.GetGmailLogin(), emailConfig.GetGmailPassword(), []string{toEmail}, "Verification", signUpHTML)
 }
