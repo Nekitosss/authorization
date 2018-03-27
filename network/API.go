@@ -60,7 +60,29 @@ func VerifyRegistration(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "fooddly://authorization", 301)
+	var html = `
+	<!DOCTYPE html>
+	<html>
+	<head>
+	<title>Success confirmation</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<script type="text/javascript">
+		function codeAddress() {
+			var iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+			if (iOS) {
+				window.location.replace("fooddly://authorization");
+			}
+		}
+	window.onload = codeAddress;
+	</script>
+	</head>
+	<body>
+	<p>Ok result, you should go back to application</p> 
+	</body>
+	</html>
+	`
+	
+	r.Write(html)
 }
 
 
