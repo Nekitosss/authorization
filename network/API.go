@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"time"
+	"fmt"
 
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
@@ -81,8 +82,8 @@ func VerifyRegistration(w http.ResponseWriter, r *http.Request) {
 	</body>
 	</html>
 	`
-	
-	r.Write(html)
+
+	fmt.Fprint(w, html)
 }
 
 
