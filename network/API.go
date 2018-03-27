@@ -60,7 +60,7 @@ func VerifyRegistration(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "http://pikabu.ru", 301)
+	http.Redirect(w, r, "fooddly://authorization", 301)
 }
 
 
